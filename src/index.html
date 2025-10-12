@@ -1,63 +1,154 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Election Results</title>
-
-    <!-- Bootstrap -->
+    <title>Système de Vote Décentralisé</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    <style>
+      .workflow-status {
+        padding: 10px;
+        margin: 20px 0;
+        border-radius: 5px;
+        font-weight: bold;
+        text-align: center;
+      }
+      .status-0 { background-color: #d1ecf1; color: #0c5460; }
+      .status-1 { background-color: #fff3cd; color: #856404; }
+      .status-2 { background-color: #f8d7da; color: #721c24; }
+      .status-3 { background-color: #d4edda; color: #155724; }
+      .status-4 { background-color: #e2e3e5; color: #383d41; }
+      .status-5 { background-color: #c3e6cb; color: #155724; }
+      .admin-section { background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+      .voter-section { background-color: #e9ecef; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+      .hidden { display: none; }
+    </style>
   </head>
   <body>
-    <div class="container" style="width: 650px;">
+    <div class="container" style="max-width: 900px; margin-top: 30px;">
       <div class="row">
         <div class="col-lg-12">
-          <h1 class="text-center">Election Results</h1>
+          <h1 class="text-center">🗳️ Système de Vote Décentralisé</h1>
           <hr/>
-          <br/>
-          <div id="loader">
-            <p class="text-center">Loading...</p>
+          
+          <div id="loader" class="text-center">
+            <p>Chargement...</p>
           </div>
+
           <div id="content" style="display: none;">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Votes</th>
-                </tr>
-              </thead>
-              <tbody id="candidatesResults">
-              </tbody>
-            </table>
-            <hr/>
-            <form onSubmit="App.castVote(); return false;">
-              <div class="form-group">
-                <label for="candidatesSelect">Select Candidate</label>
-                <select class="form-control" id="candidatesSelect">
-                </select>
+            <!-- Account Info -->
+            <div class="alert alert-info">
+              <strong>Votre compte:</strong> <span id="accountAddress"></span><br>
+              <strong>Statut:</strong> <span id="voterStatus"></span>
+            </div>
+
+            <!-- Workflow Status -->
+            <div id="workflowStatus" class="workflow-status"></div>
+
+            <!-- Admin Section -->
+            <div id="adminSection" class="admin-section hidden">
+              <h3>🔐 Panneau Administrateur</h3>
+              
+              <!-- Register Voter -->
+              <div id="registerVoterSection" class="hidden">
+                <h5>Enregistrer un électeur</h5>
+                <form onSubmit="App.registerVoter(); return false;">
+                  <div class="form-group">
+                    <input type="text" class="form-control" id="voterAddress" placeholder="Adresse Ethereum de l'électeur">
+                  </div>
+                  <button type="submit" class="btn btn-primary">Enregistrer l'électeur</button>
+                </form>
+                <button class="btn btn-success mt-2" onclick="App.startProposalsRegistration()">Démarrer l'enregistrement des propositions</button>
+                <hr>
               </div>
-              <button type="submit" class="btn btn-primary">Vote</button>
-              <hr />
-            </form>
-            <p id="accountAddress" class="text-center"></p>
+
+              <!-- Admin Controls for Proposals -->
+              <div id="proposalsAdminSection" class="hidden">
+                <button class="btn btn-warning" onclick="App.endProposalsRegistration()">Terminer l'enregistrement des propositions</button>
+                <hr>
+              </div>
+
+              <!-- Admin Controls for Voting -->
+              <div id="votingAdminSection" class="hidden">
+                <button class="btn btn-success" onclick="App.startVotingSession()">Démarrer la session de vote</button>
+                <hr>
+              </div>
+
+              <!-- Admin Controls for Ending Vote -->
+              <div id="endVotingAdminSection" class="hidden">
+                <button class="btn btn-warning" onclick="App.endVotingSession()">Terminer la session de vote</button>
+                <hr>
+              </div>
+
+              <!-- Admin Controls for Tallying -->
+              <div id="tallyAdminSection" class="hidden">
+                <button class="btn btn-info" onclick="App.tallyVotes()">Comptabiliser les votes</button>
+                <hr>
+              </div>
+            </div>
+
+            <!-- Voter Section -->
+            <div id="voterSection" class="voter-section hidden">
+              <h3>👤 Espace Électeur</h3>
+              
+              <!-- Submit Proposal -->
+              <div id="submitProposalSection" class="hidden">
+                <h5>Soumettre une proposition</h5>
+                <form onSubmit="App.submitProposal(); return false;">
+                  <div class="form-group">
+                    <textarea class="form-control" id="proposalDescription" rows="3" placeholder="Description de votre proposition"></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Soumettre la proposition</button>
+                </form>
+                <hr>
+              </div>
+
+              <!-- Vote -->
+              <div id="voteSection" class="hidden">
+                <h5>Voter pour une proposition</h5>
+                <form onSubmit="App.vote(); return false;">
+                  <div class="form-group">
+                    <select class="form-control" id="proposalSelect">
+                      <option value="">Sélectionnez une proposition</option>
+                    </select>
+                  </div>
+                  <button type="submit" class="btn btn-success">Voter</button>
+                </form>
+                <hr>
+              </div>
+
+              <!-- Already Voted -->
+              <div id="alreadyVotedSection" class="hidden">
+                <div class="alert alert-success">
+                  ✅ Vous avez déjà voté pour la proposition #<span id="votedProposalId"></span>
+                </div>
+                <hr>
+              </div>
+            </div>
+
+            <!-- Proposals List -->
+            <div id="proposalsSection">
+              <h3>📋 Propositions</h3>
+              <div id="proposalsList">
+                <p class="text-muted">Aucune proposition pour le moment</p>
+              </div>
+            </div>
+
+            <!-- Winner Section -->
+            <div id="winnerSection" class="hidden">
+              <div class="alert alert-success">
+                <h3>🏆 Proposition Gagnante</h3>
+                <p><strong>Description:</strong> <span id="winnerDescription"></span></p>
+                <p><strong>Nombre de votes:</strong> <span id="winnerVoteCount"></span></p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
     <script src="js/web3.min.js"></script>
     <script src="js/truffle-contract.js"></script>
