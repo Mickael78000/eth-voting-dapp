@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://ajax.googleapis.com; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:* ws://localhost:* https://*.infura.io; img-src 'self' data:;">
     <title>Système de Vote Décentralisé</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -23,10 +24,12 @@
       .admin-section { background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
       .voter-section { background-color: #e9ecef; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
       .hidden { display: none; }
+      .container-main { max-width: 900px; margin-top: 30px; }
+      #content { display: none; }
     </style>
   </head>
   <body>
-    <div class="container" style="max-width: 900px; margin-top: 30px;">
+    <div class="container container-main">
       <div class="row">
         <div class="col-lg-12">
           <h1 class="text-center">🗳️ Système de Vote Décentralisé</h1>
@@ -36,7 +39,7 @@
             <p>Chargement...</p>
           </div>
 
-          <div id="content" style="display: none;">
+          <div id="content">
             <!-- Account Info -->
             <div class="alert alert-info">
               <strong>Votre compte:</strong> <span id="accountAddress"></span><br>
@@ -53,37 +56,37 @@
               <!-- Register Voter -->
               <div id="registerVoterSection" class="hidden">
                 <h5>Enregistrer un électeur</h5>
-                <form onSubmit="App.registerVoter(); return false;">
+                <form id="registerVoterForm">
                   <div class="form-group">
                     <input type="text" class="form-control" id="voterAddress" placeholder="Adresse Ethereum de l'électeur">
                   </div>
                   <button type="submit" class="btn btn-primary">Enregistrer l'électeur</button>
                 </form>
-                <button class="btn btn-success mt-2" onclick="App.startProposalsRegistration()">Démarrer l'enregistrement des propositions</button>
+                <button class="btn btn-success mt-2" id="startProposalsBtn">Démarrer l'enregistrement des propositions</button>
                 <hr>
               </div>
 
               <!-- Admin Controls for Proposals -->
               <div id="proposalsAdminSection" class="hidden">
-                <button class="btn btn-warning" onclick="App.endProposalsRegistration()">Terminer l'enregistrement des propositions</button>
+                <button class="btn btn-warning" id="endProposalsBtn">Terminer l'enregistrement des propositions</button>
                 <hr>
               </div>
 
               <!-- Admin Controls for Voting -->
               <div id="votingAdminSection" class="hidden">
-                <button class="btn btn-success" onclick="App.startVotingSession()">Démarrer la session de vote</button>
+                <button class="btn btn-success" id="startVotingBtn">Démarrer la session de vote</button>
                 <hr>
               </div>
 
               <!-- Admin Controls for Ending Vote -->
               <div id="endVotingAdminSection" class="hidden">
-                <button class="btn btn-warning" onclick="App.endVotingSession()">Terminer la session de vote</button>
+                <button class="btn btn-warning" id="endVotingBtn">Terminer la session de vote</button>
                 <hr>
               </div>
 
               <!-- Admin Controls for Tallying -->
               <div id="tallyAdminSection" class="hidden">
-                <button class="btn btn-info" onclick="App.tallyVotes()">Comptabiliser les votes</button>
+                <button class="btn btn-info" id="tallyVotesBtn">Comptabiliser les votes</button>
                 <hr>
               </div>
             </div>
@@ -95,7 +98,7 @@
               <!-- Submit Proposal -->
               <div id="submitProposalSection" class="hidden">
                 <h5>Soumettre une proposition</h5>
-                <form onSubmit="App.submitProposal(); return false;">
+                <form id="submitProposalForm">
                   <div class="form-group">
                     <textarea class="form-control" id="proposalDescription" rows="3" placeholder="Description de votre proposition"></textarea>
                   </div>
@@ -107,7 +110,7 @@
               <!-- Vote -->
               <div id="voteSection" class="hidden">
                 <h5>Voter pour une proposition</h5>
-                <form onSubmit="App.vote(); return false;">
+                <form id="voteForm">
                   <div class="form-group">
                     <select class="form-control" id="proposalSelect">
                       <option value="">Sélectionnez une proposition</option>
