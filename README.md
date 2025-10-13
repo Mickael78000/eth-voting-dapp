@@ -25,6 +25,8 @@ Ce projet implémente un système de vote décentralisé avec gestion de workflo
 - **jQuery**: v1.12.4
 - **Truffle Contract**: Pour l'interaction avec les smart contracts
 - **Lite-server**: Serveur de développement
+- **CSP-Compliant**: Content Security Policy respecté (pas d'inline scripts)
+- **Async/Await**: Patterns modernes pour MetaMask
 
 ### Blockchain Locale
 - **Ganache**: v7.9.2
@@ -105,7 +107,9 @@ Replacing 'Voting'
 npm run dev
 ```
 
-L'application sera accessible sur **http://localhost:3001**
+L'application sera accessible sur **http://localhost:3000**
+
+> **Note**: Le port peut varier (3000, 3001, 3002) selon les instances de lite-server en cours d'exécution. Vérifiez la sortie de la console.
 
 ## 🧪 Tests
 
@@ -209,27 +213,69 @@ Le système suit un workflow strict :
 
 ## 🐛 Résolution de Problèmes
 
-### Erreur "Contract not deployed"
+### Erreur "Contract not deployed" ou "Internal JSON-RPC error"
 - Vérifiez que Ganache est lancé sur le port 7545
 - Relancez `truffle migrate --reset`
+- Vérifiez que MetaMask est connecté au bon réseau (Ganache Local - Chain ID 1337)
+- Consultez la console du navigateur pour des messages d'erreur détaillés
+
+### Erreur "Aucun compte trouvé"
+- Déverrouillez MetaMask
+- Connectez votre compte au site (cliquez sur l'icône MetaMask et sélectionnez "Connecter")
+- Vérifiez que vous avez importé un compte depuis Ganache
+- Rafraîchissez la page après la connexion
 
 ### Erreur MetaMask "Nonce too high"
 - Dans MetaMask : Paramètres → Avancé → Réinitialiser le compte
 
-### Erreur "Invalid solidity type: tuple"
-- Ce problème est résolu avec les fonctions de compatibilité web3.js 0.20.x ajoutées au contrat
+### Erreur "e is not a function" ou "sendAsync"
+- Ce problème est résolu avec le wrapper de compatibilité ajouté dans `app.js`
+- Assurez-vous que les derniers changements sont appliqués
+
+### Erreur CSP (Content Security Policy)
+- Tous les event handlers inline ont été supprimés
+- Les événements sont gérés via `App.bindEvents()` dans le JavaScript
 
 ### La page ne charge pas
 - Vérifiez que `npm run dev` est en cours d'exécution
 - Vérifiez que MetaMask est connecté au réseau Ganache Local
+- Ouvrez la console du navigateur (F12) pour voir les logs détaillés
+
+### Les boutons ne fonctionnent pas
+- Vérifiez que `App.bindEvents()` est appelé après le chargement du DOM
+- Consultez la console pour les erreurs JavaScript
 
 ## 📝 Notes Importantes
+
+### Compatibilité et Architecture
 
 - **Compatibilité Web3.js**: Le projet utilise web3.js 0.20.x pour la compatibilité. Des fonctions spéciales (`isVoterRegistered`, `hasVoterVoted`, `getVoterVotedProposalId`) ont été ajoutées au contrat pour éviter les problèmes de décodage des structs.
 
 - **Solidity 0.8.20**: Version moderne avec protection contre les débordements intégrée.
 
 - **OpenZeppelin**: Utilisation du contrat `Ownable` pour la gestion des droits d'administration.
+
+### Améliorations Modernes
+
+- **Async/Await**: Toutes les fonctions utilisent des patterns async/await modernes pour une meilleure gestion des transactions MetaMask.
+
+- **CSP-Compliant**: L'application respecte les Content Security Policies strictes :
+  - Aucun inline event handler (`onclick`, `onsubmit`)
+  - Tous les événements sont liés via JavaScript avec `addEventListener`
+  - Aucun inline style (sauf dans le bloc `<style>`)
+
+- **Wrapper sendAsync**: Un wrapper de compatibilité est ajouté automatiquement pour que truffle-contract fonctionne avec les providers MetaMask modernes.
+
+- **Gestion des changements MetaMask**: L'application détecte automatiquement :
+  - Les changements de compte (recharge la page)
+  - Les changements de réseau (recharge la page)
+  - Les déconnexions de compte
+
+- **Logs de débogage**: Des logs console détaillés facilitent le débogage :
+  - État de connexion MetaMask
+  - Comptes récupérés
+  - État du workflow
+  - Erreurs spécifiques pour chaque appel de contrat
 
 ## 📄 Licence
 
@@ -242,23 +288,3 @@ Projet développé dans le cadre du bootcamp Ethereum.
 ---
 
 **Bon vote décentralisé ! 🗳️✨**
-## Step 3. Start Ganache
-Open the Ganache GUI client that you downloaded and installed. This will start your local blockchain instance. See free video tutorial for full explanation.
-
-
-## Step 4. Compile & Deploy Election Smart Contract
-`$ truffle migrate --reset`
-You must migrate the election smart contract each time your restart ganache.
-
-## Step 5. Configure Metamask
-See free video tutorial for full explanation of these steps:
-- Unlock Metamask
-- Connect metamask to your local Etherum blockchain provided by Ganache.
-- Import an account provided by ganache.
-
-## Step 6. Run the Front End Application
-`$ npm run dev`
-Visit this URL in your browser: http://localhost:3000
-
-If you get stuck, please reference the free video tutorial.
-
