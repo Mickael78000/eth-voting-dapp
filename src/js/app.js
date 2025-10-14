@@ -82,33 +82,41 @@ App = {
     content.hide();
 
     try {
-      // Get accounts using modern async/await
+      // Get accounts using modern Ethereum API
       console.log("Récupération des comptes...");
       
-      // Create a new Web3 instance if needed
-      if (typeof web3 === 'undefined' || !web3.eth) {
-        web3 = new Web3(App.web3Provider);
-      }
-      
-      let accounts = await web3.eth.getAccounts();
-      console.log("Comptes récupérés:", accounts);
-      
-      // Si aucun compte, essayer de demander à nouveau l'accès
-      if (!accounts || accounts.length === 0) {
-        if (typeof window.ethereum !== 'undefined') {
-          console.log("Aucun compte trouvé, nouvelle demande d'accès...");
+      let accounts;
+      if (typeof window.ethereum !== 'undefined') {
+        // Use modern Ethereum API directly (more reliable)
+        accounts = await window.ethereum.request({ method: 'eth_accounts' });
+        console.log("Comptes récupérés:", accounts);
+        
+        // If no accounts, request access
+        if (!accounts || accounts.length === 0) {
+          console.log("Aucun compte trouvé, demande d'accès...");
           try {
             accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            console.log("Comptes après demande:", accounts);
           } catch (error) {
             console.error("Erreur lors de la demande d'accès:", error);
+            alert("Veuillez autoriser l'accès à MetaMask pour utiliser cette application.");
+            loader.hide();
+            return;
           }
         }
-        
-        if (!accounts || accounts.length === 0) {
-          alert("Aucun compte trouvé. Veuillez:\n1. Déverrouiller MetaMask\n2. Connecter votre compte à ce site\n3. Rafraîchir la page");
-          loader.hide();
-          return;
+      } else {
+        // Fallback to web3.eth for non-MetaMask providers
+        if (typeof web3 === 'undefined' || !web3.eth) {
+          web3 = new Web3(App.web3Provider);
         }
+        accounts = await web3.eth.getAccounts();
+        console.log("Comptes récupérés (web3):", accounts);
+      }
+      
+      if (!accounts || accounts.length === 0) {
+        alert("Aucun compte trouvé. Veuillez:\n1. Déverrouiller MetaMask\n2. Connecter votre compte à ce site\n3. Rafraîchir la page");
+        loader.hide();
+        return;
       }
 
       App.account = accounts[0];
