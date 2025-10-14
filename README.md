@@ -10,7 +10,20 @@ Une application décentralisée (DApp) complète de vote sur la blockchain Ether
 
 **🚀 Application déployée**: [https://eth-voting-dapp.vercel.app/](https://eth-voting-dapp.vercel.app/)
 
-> **Note**: Pour utiliser la démo, vous devez avoir MetaMask installé et connecté à un réseau Ethereum (Ganache local, Sepolia, ou autre réseau de test).
+**🔗 Contrat déployé sur Sepolia Testnet**:  
+`0xb527862D9b97E7e846E6D302C02325F7FC8f6F82`  
+[Voir sur Etherscan](https://sepolia.etherscan.io/address/0xb527862D9b97E7e846E6D302C02325F7FC8f6F82)
+
+### Comment utiliser la démo :
+
+1. **Installer MetaMask**: [metamask.io](https://metamask.io/)
+2. **Basculer sur Sepolia**: Dans MetaMask, sélectionnez le réseau "Sepolia test network"
+3. **Obtenir des ETH de test** (gratuit) :
+   - [Alchemy Sepolia Faucet](https://www.alchemy.com/faucets/ethereum-sepolia)
+   - [Sepolia Faucet](https://sepoliafaucet.com/)
+4. **Visiter l'application**: [https://eth-voting-dapp.vercel.app/](https://eth-voting-dapp.vercel.app/)
+
+> **💡 Note**: Pour tester en tant qu'administrateur, vous devez être le propriétaire du contrat. Pour tester en tant qu'électeur, demandez à l'administrateur de vous enregistrer.
 
 ## 📋 Description
 
