@@ -63,7 +63,7 @@ App = {
   },
 
   initContract: function() {
-    $.getJSON('/contracts/Voting.json', function(data) {
+    $.getJSON('/build/contracts/Voting.json', function(data) {
       App.contracts.Voting = TruffleContract(data);
       // Utiliser le provider qui a été correctement configuré
       App.contracts.Voting.setProvider(App.web3Provider);
