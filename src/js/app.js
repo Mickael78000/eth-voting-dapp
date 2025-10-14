@@ -63,11 +63,14 @@ App = {
   },
 
   initContract: function() {
-    $.getJSON('Voting.json', function(data) {
+    $.getJSON('/contracts/Voting.json', function(data) {
       App.contracts.Voting = TruffleContract(data);
       // Utiliser le provider qui a été correctement configuré
       App.contracts.Voting.setProvider(App.web3Provider);
       return App.render();
+    }).fail(function(error) {
+      console.error('Error loading contract:', error);
+      alert('Erreur lors du chargement du contrat. Vérifiez que le contrat est déployé.');
     });
   },
 
