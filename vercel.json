@@ -9,26 +9,6 @@
     {
       "source": "/contracts/(.*)",
       "destination": "/build/contracts/$1"
-    },
-    {
-      "source": "/css/(.*)",
-      "destination": "/src/css/$1"
-    },
-    {
-      "source": "/js/(.*)",
-      "destination": "/src/js/$1"
-    },
-    {
-      "src": "/js/(.*)",
-      "dest": "/src/js/$1"
-    },
-    {
-      "src": "/fonts/(.*)",
-      "dest": "/src/fonts/$1"
-    },
-    {
-      "src": "/",
-      "dest": "/src/index.html"
     }
   ]
 }
