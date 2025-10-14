@@ -1,7 +1,16 @@
 
 # 🗳️ Système de Vote Décentralisé - DApp Ethereum
 
+[![Live Demo](https://img.shields.io/badge/demo-live-success)](https://eth-voting-dapp.vercel.app/)
+[![Deployed on Vercel](https://img.shields.io/badge/deployed%20on-Vercel-black)](https://vercel.com)
+
 Une application décentralisée (DApp) complète de vote sur la blockchain Ethereum, développée avec Truffle, Solidity et Web3.js.
+
+## 🌐 Démo en Ligne
+
+**🚀 Application déployée**: [https://eth-voting-dapp.vercel.app/](https://eth-voting-dapp.vercel.app/)
+
+> **Note**: Pour utiliser la démo, vous devez avoir MetaMask installé et connecté à un réseau Ethereum (Ganache local, Sepolia, ou autre réseau de test).
 
 ## 📋 Description
 
