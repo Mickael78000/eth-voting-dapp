@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/build/contracts/(.*)",
+      "destination": "/build/contracts/$1"
+    },
+    {
       "source": "/contracts/(.*)",
       "destination": "/build/contracts/$1"
     },
