@@ -1,4 +1,6 @@
 {
+  "buildCommand": "npm run build",
+  "outputDirectory": "public",
   "rewrites": [
     {
       "source": "/build/contracts/(.*)",
@@ -17,12 +19,16 @@
       "destination": "/src/js/$1"
     },
     {
-      "source": "/fonts/(.*)",
-      "destination": "/src/fonts/$1"
+      "src": "/js/(.*)",
+      "dest": "/src/js/$1"
     },
     {
-      "source": "/",
-      "destination": "/src/index.html"
+      "src": "/fonts/(.*)",
+      "dest": "/src/fonts/$1"
+    },
+    {
+      "src": "/",
+      "dest": "/src/index.html"
     }
   ]
 }

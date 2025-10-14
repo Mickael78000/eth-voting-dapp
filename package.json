@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "lite-server",
-    "build": "echo 'Build complete - static files ready'",
+    "build": "mkdir -p public && cp -r src/* public/ && cp -r build public/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
