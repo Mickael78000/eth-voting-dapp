@@ -1,0 +1,40 @@
+{
+  "version": 2,
+  "name": "eth-voting-dapp",
+  "builds": [
+    {
+      "src": "src/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "build/contracts/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/css/(.*)",
+      "dest": "/src/css/$1"
+    },
+    {
+      "src": "/js/(.*)",
+      "dest": "/src/js/$1"
+    },
+    {
+      "src": "/fonts/(.*)",
+      "dest": "/src/fonts/$1"
+    },
+    {
+      "src": "/contracts/(.*)",
+      "dest": "/build/contracts/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/src/$1"
+    },
+    {
+      "src": "/",
+      "dest": "/src/index.html"
+    }
+  ]
+}
