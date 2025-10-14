@@ -84,6 +84,12 @@ App = {
     try {
       // Get accounts using modern async/await
       console.log("Récupération des comptes...");
+      
+      // Create a new Web3 instance if needed
+      if (typeof web3 === 'undefined' || !web3.eth) {
+        web3 = new Web3(App.web3Provider);
+      }
+      
       let accounts = await web3.eth.getAccounts();
       console.log("Comptes récupérés:", accounts);
       
@@ -303,6 +309,7 @@ App = {
           index++;
         } catch (error) {
           // Error means we've reached the end of the array or no proposals exist
+          console.log("Fin du chargement des propositions à l'index", index);
           break;
         }
       }
