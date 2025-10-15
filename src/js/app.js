@@ -250,6 +250,7 @@ App = {
     $("#votingAdminSection").addClass('hidden');
     $("#endVotingAdminSection").addClass('hidden');
     $("#tallyAdminSection").addClass('hidden');
+    $("#resetSection").addClass('hidden');
     $("#submitProposalSection").addClass('hidden');
     $("#voteSection").addClass('hidden');
     $("#alreadyVotedSection").addClass('hidden');
@@ -258,6 +259,9 @@ App = {
     if (App.isOwner) {
       console.log("Affichage de la section admin");
       $("#adminSection").removeClass('hidden');
+      
+      // Toujours afficher le bouton de réinitialisation pour l'admin
+      $("#resetSection").removeClass('hidden');
       
       if (App.workflowStatus === 0) {
         $("#registerVoterSection").removeClass('hidden');
@@ -556,6 +560,28 @@ App = {
     }
   },
 
+  resetVotingSession: async function() {
+    if (!confirm("\u26a0\ufe0f ATTENTION: Cette action va r\u00e9initialiser compl\u00e8tement la session de vote.\n\nTous les \u00e9lecteurs, propositions et votes seront effac\u00e9s.\n\nVoulez-vous continuer?")) {
+      return;
+    }
+
+    try {
+      const instance = await App.contracts.Voting.deployed();
+      console.log("R\u00e9initialisation de la session de vote...");
+      const tx = await instance.resetVotingSession({ from: App.account });
+      console.log("Transaction confirm\u00e9e:", tx);
+      alert("Session de vote r\u00e9initialis\u00e9e avec succ\u00e8s! Vous pouvez maintenant recommencer.");
+      await App.render();
+    } catch (error) {
+      console.error("Erreur:", error);
+      if (error.message.includes("User denied")) {
+        alert("Transaction annul\u00e9e par l'utilisateur");
+      } else {
+        alert("Erreur: " + (error.message || error));
+      }
+    }
+  },
+
   bindEvents: function() {
     // Form: Register Voter
     const registerVoterForm = document.getElementById('registerVoterForm');
@@ -626,6 +652,15 @@ App = {
       voteForm.addEventListener('submit', function(e) {
         e.preventDefault();
         App.vote();
+      });
+    }
+
+    // Button: Reset Voting Session
+    const resetSessionBtn = document.getElementById('resetSessionBtn');
+    if (resetSessionBtn) {
+      resetSessionBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        App.resetVotingSession();
       });
     }
   }

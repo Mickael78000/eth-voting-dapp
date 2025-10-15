@@ -37,6 +37,9 @@ contract Voting is Ownable {
     
     // Tableau des propositions
     Proposal[] public proposals;
+    
+    // Tableau pour suivre les adresses des électeurs enregistrés
+    address[] private registeredVoterAddresses;
 
     // Événements
     event VoterRegistered(address voterAddress);
@@ -81,6 +84,7 @@ contract Voting is Ownable {
         require(_voterAddress != address(0), "Adresse invalide");
         
         voters[_voterAddress].isRegistered = true;
+        registeredVoterAddresses.push(_voterAddress);
         
         emit VoterRegistered(_voterAddress);
     }
@@ -258,5 +262,34 @@ contract Voting is Ownable {
      */
     function getVoterVotedProposalId(address _voterAddress) external view returns (uint) {
         return voters[_voterAddress].votedProposalId;
+    }
+
+    // ::::::::::::: RESET FUNCTION ::::::::::::: //
+
+    /**
+     * @notice Réinitialise complètement la session de vote (uniquement par l'administrateur)
+     * @dev Remet le contrat à l'état initial, efface toutes les propositions et réinitialise tous les électeurs
+     */
+    function resetVotingSession() external onlyOwner {
+        // Réinitialiser tous les électeurs enregistrés
+        for (uint i = 0; i < registeredVoterAddresses.length; i++) {
+            address voterAddr = registeredVoterAddresses[i];
+            delete voters[voterAddr];
+        }
+        
+        // Vider le tableau des adresses d'électeurs
+        delete registeredVoterAddresses;
+        
+        // Vider toutes les propositions
+        delete proposals;
+        
+        // Réinitialiser l'ID du gagnant
+        winningProposalId = 0;
+        
+        // Réinitialiser le workflow au début
+        WorkflowStatus previousStatus = workflowStatus;
+        workflowStatus = WorkflowStatus.RegisteringVoters;
+        
+        emit WorkflowStatusChange(previousStatus, workflowStatus);
     }
 }
